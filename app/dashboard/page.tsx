@@ -74,7 +74,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={`${bodyFont.className} min-h-screen bg-zinc-950 text-white pb-24 max-w-md mx-auto select-none`}>
+    <div className={`${bodyFont.className} min-h-screen bg-zinc-950 text-white pb-24 w-full select-none`}>
             <div className="px-4 pt-4 pb-3 flex items-center justify-between gap-2 sticky top-0 bg-zinc-950/90 backdrop-blur-md z-20 border-b border-zinc-900">
         <div className="flex items-center gap-2 shrink-0">
           <Logo size={30} />
@@ -227,7 +227,7 @@ export default function Dashboard() {
 
       {activeTab === 'streak' && <StreakTab profile={profile} completedCount={logs.length} totalCaloriesLost={totalCaloriesLost} currentDay={currentDay} alreadyLoggedToday={alreadyLoggedToday} />}
 
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/90 px-6 py-2.5 flex justify-around items-center z-30">
+      <div className="fixed bottom-0 left-0 right-0 w-full bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/90 px-6 py-2.5 flex justify-around items-center z-30">
         <button onClick={() => setActiveTab('routine')} className={`flex flex-col items-center gap-0.5 text-[11px] font-bold ${activeTab === 'routine' ? 'text-emerald-400' : 'text-zinc-500'}`}><span className="text-lg">📋</span><span>Routine</span></button>
         <button onClick={() => setActiveTab('checkin')} className={`flex flex-col items-center gap-0.5 text-[11px] font-bold ${activeTab === 'checkin' ? 'text-emerald-400' : 'text-zinc-500'}`}><span className="text-lg">✅</span><span>Check-In</span></button>
         <button onClick={() => setActiveTab('streak')} className={`flex flex-col items-center gap-0.5 text-[11px] font-bold ${activeTab === 'streak' ? 'text-emerald-400' : 'text-zinc-500'}`}><span className="text-lg">🏆</span><span>{profile.challenge_days}D Streak</span></button>
