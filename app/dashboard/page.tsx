@@ -122,13 +122,25 @@ export default function Dashboard() {
       </div>
             {activeTab === 'routine' && (
         <div className="px-5 mt-5">
-          <div className="flex gap-2 overflow-x-auto pb-2">
+                    <div className="grid grid-cols-5 gap-1.5 pb-1">
             {timeSlots.map((slot, i) => (
-              <button key={i} onClick={() => setSelectedSlot(i)} className={`px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap border ${selectedSlot === i ? 'bg-emerald-500 text-zinc-950 border-emerald-400' : 'bg-zinc-900 text-zinc-400 border-zinc-800'}`}>
-                {slot.tab} {slot.questions.every((q) => answers[q.key] !== null) && '✓'}
+              <button
+                key={i}
+                onClick={() => setSelectedSlot(i)}
+                className={`py-2 px-1 rounded-xl text-[10px] font-bold transition flex flex-col items-center gap-0.5 ${
+                  selectedSlot === i
+                    ? 'bg-emerald-500 text-zinc-950 shadow-md shadow-emerald-500/20'
+                    : 'bg-zinc-900 text-zinc-400 border border-zinc-800'
+                }`}
+              >
+                <span className="text-sm leading-none">{slot.tab.split(' ')[0]}</span>
+                <span className="truncate w-full text-center">
+                  {slot.tab.split(' ')[1]} {slot.questions.every((q) => answers[q.key] !== null) && '✓'}
+                </span>
               </button>
             ))}
           </div>
+
           <div className={`mt-3 bg-gradient-to-b ${currentCard.accent} border rounded-3xl p-5 space-y-4`}>
             <div className="flex items-center justify-between">
               <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-zinc-950/60">⏰ {currentCard.badge}</span>
