@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.dailyfit_gold.twa",
+        "sha256_cert_fingerprints": ["26:A4:AB:56:05:B0:04:FD:DB:23:FB:F0:D0:DD:B9:AE:7D:F5:46:29:3B:5C:A8:6C:00:F8:71:CC:19:53:E3:28"]
+      }
+    }]
