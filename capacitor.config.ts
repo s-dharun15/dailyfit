@@ -7,6 +7,7 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://vercel.app',
     cleartext: true,
+    allowNavigation: ['dailyfit-gold.vercel.app', '*.supabase.co'],
   },
 };
 
