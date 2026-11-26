@@ -10,7 +10,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-      - uses: android-actions/setup-android@v3
       - name: Build Debug APK
         run: |
           cd android
