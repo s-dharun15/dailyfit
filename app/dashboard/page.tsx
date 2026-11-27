@@ -183,21 +183,7 @@ export default function Dashboard() {
               </div>
             )}
 
-            <div className="pt-2 border-t border-white/10 space-y-2.5">
-              <div className="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Quick Log This Step:</div>
-              {currentCard.questions.map((q) => (
-                <div key={q.key} className="flex items-center justify-between bg-zinc-950/80 px-3.5 py-2.5 rounded-2xl">
-                  <div>
-                    <div className="text-xs font-semibold text-zinc-100">{q.text}</div>
-                    <div className="text-[10px] text-emerald-400 font-bold">+{q.pts} kcal</div>
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button onClick={() => setAnswers((p) => ({ ...p, [q.key]: true }))} className={`px-3 py-1.5 rounded-xl text-xs font-extrabold ${answers[q.key] === true ? 'bg-emerald-500 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>Yes</button>
-                    <button onClick={() => setAnswers((p) => ({ ...p, [q.key]: false }))} className={`px-3 py-1.5 rounded-xl text-xs font-extrabold ${answers[q.key] === false ? 'bg-rose-500 text-white' : 'bg-zinc-800 text-zinc-400'}`}>No</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            
             <div className="flex gap-2 pt-1">
               {selectedSlot > 0 && <button onClick={() => setSelectedSlot((s) => s - 1)} className="px-4 py-3 rounded-2xl bg-zinc-900 text-xs font-bold text-zinc-300">← Back</button>}
               {selectedSlot < 4 ? (
