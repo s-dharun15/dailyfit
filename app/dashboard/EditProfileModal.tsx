@@ -14,8 +14,9 @@ export default function EditProfileModal({ profile, onClose, onUpdated }: Props)
   const [weight, setWeight] = useState(String(profile.weight));
   const [height, setHeight] = useState(String(profile.height));
   const [age, setAge] = useState(String(profile.age));
+  const [goal, setGoal] = useState<'lose' | 'muscle' | 'fit'>('lose');
   const [challengeDays, setChallengeDays] = useState<30 | 60 | 90>(
-    (profile.challenge_days === 60 || profile.challenge_days === 90 ? profile.challenge_days : 30)
+    profile.challenge_days === 60 || profile.challenge_days === 90 ? profile.challenge_days : 30
   );
   const [saving, setSaving] = useState(false);
 
@@ -32,9 +33,12 @@ export default function EditProfileModal({ profile, onClose, onUpdated }: Props)
         ? 10 * numWeight + 6.25 * numHeight - 5 * numAge + 5
         : 10 * numWeight + 6.25 * numHeight - 5 * numAge - 161;
 
-    const maintenance = Math.round(bmr * 1.35);
+    const maintenance = Math.round(bmr * 1.375);
     const minSafe = profile.gender === 'male' ? 1500 : 1200;
-    const newCalories = Math.max(minSafe, maintenance - 450);
+
+    let newCalories = maintenance;
+    if (goal === 'lose') newCalories = Math.max(minSafe, maintenance - 450);
+    if (goal === 'muscle') newCalories = maintenance + 250;
 
     const { error } = await supabase
       .from('profiles')
@@ -61,14 +65,21 @@ export default function EditProfileModal({ profile, onClose, onUpdated }: Props)
     }
   };
 
+  const challengeOptions = new Array<30 | 60 | 90>(30, 60, 90);
+  const goalOptions: { id: 'lose' | 'muscle' | 'fit'; label: string }[] = [
+    { id: 'lose', label: '🔥 Lose Fat' },
+    { id: 'muscle', label: '💪 Gain Muscle' },
+    { id: 'fit', label: '⚡ Stay Fit' },
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <form
         onSubmit={handleSave}
         className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-5 space-y-4 shadow-2xl"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-extrabold text-white">⚙️ Edit Stats & Goal</h3>
+          <h3 className="text-base font-extrabold text-white">⚙️ Personalize Your Plan</h3>
           <button
             type="button"
             onClick={onClose}
@@ -76,6 +87,28 @@ export default function EditProfileModal({ profile, onClose, onUpdated }: Props)
           >
             ✕
           </button>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1.5">
+            Primary Goal
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {goalOptions.map((g) => (
+              <button
+                type="button"
+                key={g.id}
+                onClick={() => setGoal(g.id)}
+                className={`py-2.5 rounded-xl border text-[11px] font-extrabold transition ${
+                  goal === g.id
+                    ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                    : 'bg-zinc-950 border-zinc-800 text-zinc-400'
+                }`}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2.5">
@@ -123,7 +156,7 @@ export default function EditProfileModal({ profile, onClose, onUpdated }: Props)
             Challenge Duration
           </label>
           <div className="grid grid-cols-3 gap-2">
-            {([30, 60, 90] as const).map((days) => (
+            {challengeOptions.map((days) => (
               <button
                 type="button"
                 key={days}
@@ -145,7 +178,7 @@ export default function EditProfileModal({ profile, onClose, onUpdated }: Props)
           disabled={saving}
           className="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-extrabold text-xs transition active:scale-95"
         >
-          {saving ? 'Recalculating Plan... ⏳' : 'Save & Recalculate Calories ✅'}
+          {saving ? 'Recalculating Plan... ⏳' : 'Save & Update Plan ✅'}
         </button>
       </form>
     </div>

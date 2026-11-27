@@ -11,6 +11,8 @@ import RemindersButton from './RemindersButton';
 import Logo from '../Logo';
 import EditProfileModal from './EditProfileModal';
 import WorkoutTimerModal from './WorkoutTimerModal';
+import FoodLogTab from './FoodLogTab';
+
 
 ;
 
@@ -21,7 +23,8 @@ const bodyFont = Plus_Jakarta_Sans({ subsets: ['latin'], weight: ['400', '600', 
 export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [logs, setLogs] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'routine' | 'checkin' | 'streak'>('routine');
+ const [activeTab, setActiveTab] = useState<'routine' | 'food' | 'checkin' | 'streak'>('routine');
+
   const [selectedSlot, setSelectedSlot] = useState(0);
 const [dietType, setDietType] = useState<'veg' | 'nonveg'>('nonveg');
 const [glassesDrunk, setGlassesDrunk] = useState(0);
@@ -55,6 +58,8 @@ const handleAddWater = (maxGlasses: number) => {
   const [activeVideo, setActiveVideo] = useState<WorkoutDemo | null>(null);
 const [showEditProfile, setShowEditProfile] = useState(false);
 const [timerWorkout, setTimerWorkout] = useState<WorkoutDemo | null>(null);
+const [showCoach, setShowCoach] = useState(false);
+
 
 
   const router = useRouter();
@@ -121,7 +126,16 @@ const [timerWorkout, setTimerWorkout] = useState<WorkoutDemo | null>(null);
             <button onClick={() => setDietType('veg')} className={`px-2 py-1 rounded-full whitespace-nowrap ${dietType === 'veg' ? 'bg-emerald-500 text-zinc-950' : 'text-zinc-400'}`}>🥗 Veg</button>
             <button onClick={() => setDietType('nonveg')} className={`px-2 py-1 rounded-full whitespace-nowrap ${dietType === 'nonveg' ? 'bg-amber-400 text-zinc-950' : 'text-zinc-400'}`}>🍗 Non-Veg</button>
           </div>
+                    <button
+            onClick={() => setShowCoach(true)}
+            className="px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500 hover:text-zinc-950 transition"
+          >
+            🩺 Coach
+          </button>
+
           <button
+          
+         
   onClick={() => setShowEditProfile(true)}
   className="px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap bg-zinc-900 border border-zinc-700 text-zinc-300 hover:border-emerald-400 hover:text-emerald-300 transition"
 >
@@ -311,14 +325,31 @@ const [timerWorkout, setTimerWorkout] = useState<WorkoutDemo | null>(null);
           </div>
         </div>
       )}
+      {activeTab === 'food' && <FoodLogTab profile={profile} dietType={dietType} />}
+
 
       {activeTab === 'streak' && <StreakTab profile={profile} completedCount={logs.length} totalCaloriesLost={totalCaloriesLost} currentDay={currentDay} alreadyLoggedToday={alreadyLoggedToday} />}
 
-      <div className="fixed bottom-0 left-0 right-0 w-full bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/90 px-6 py-2.5 flex justify-around items-center z-30">
-        <button onClick={() => setActiveTab('routine')} className={`flex flex-col items-center gap-0.5 text-[11px] font-bold ${activeTab === 'routine' ? 'text-emerald-400' : 'text-zinc-500'}`}><span className="text-lg">📋</span><span>Routine</span></button>
-        <button onClick={() => setActiveTab('checkin')} className={`flex flex-col items-center gap-0.5 text-[11px] font-bold ${activeTab === 'checkin' ? 'text-emerald-400' : 'text-zinc-500'}`}><span className="text-lg">✅</span><span>Check-In</span></button>
-        <button onClick={() => setActiveTab('streak')} className={`flex flex-col items-center gap-0.5 text-[11px] font-bold ${activeTab === 'streak' ? 'text-emerald-400' : 'text-zinc-500'}`}><span className="text-lg">🏆</span><span>{profile.challenge_days}D Streak</span></button>
+            <div className="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 px-4 py-2.5 grid grid-cols-4 gap-2 z-20">
+        {[
+          { id: 'routine', icon: '📅', label: 'Routine' },
+          { id: 'food', icon: '🍛', label: 'Food Log' },
+          { id: 'checkin', icon: '✅', label: 'Check-In' },
+          { id: 'streak', icon: '🔥', label: `${profile.challenge_days}D Streak` },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as 'routine' | 'food' | 'checkin' | 'streak')}
+            className={`py-2 rounded-2xl flex flex-col items-center gap-0.5 text-[11px] font-extrabold transition ${
+              activeTab === tab.id ? 'bg-emerald-500 text-zinc-950' : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <span className="text-base leading-none">{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
+
 
       <VideoModal workout={activeVideo} onClose={() => setActiveVideo(null)} />
            {showEditProfile && (
