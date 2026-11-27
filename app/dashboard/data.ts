@@ -27,7 +27,219 @@ export type WorkoutDemo = {
   youtubeId: string;
 };
 
+type SouthIndianDayMenu = {
+  dayLabel: string;
+  vegBreakfast: string[];
+  nonVegBreakfast: string[];
+  vegLunch: string[];
+  nonVegLunch: string[];
+  eveningSnack: string;
+  vegDinner: (dCal: number) => string[];
+  nonVegDinner: (dCal: number) => string[];
+};
+
+const SOUTH_INDIAN_WEEKLY_MENU: SouthIndianDayMenu[] = [
+  {
+    dayLabel: 'Sunday Special',
+    vegBreakfast: [
+      '2 crisp Masala Dosas (tawa roasted, 1 tsp oil) with drumstick sambar',
+      '1 bowl Pongal (little millet/samai) with kathirikai gotsu',
+    ],
+    nonVegBreakfast: [
+      '2 Egg Dosas with sambar and mint chutney',
+      '2 steamed idlis with home-style chicken salna (lean pieces)',
+    ],
+    vegLunch: [
+      '1 cup Vegetable Seeraga Samba Biryani with cucumber & onion raita',
+      '1 bowl roasted appalam + 1 glass neer mor (spiced buttermilk)',
+    ],
+    nonVegLunch: [
+      '1 cup Home-Style Chicken Biryani (120g lean chicken) with onion raita',
+      '1 large bowl cucumber-carrot salad + 1 glass neer mor',
+    ],
+    eveningSnack: '1 bowl steamed black kondakadalai (chana) sundal + sukku malli coffee',
+    vegDinner: (dCal) => [
+      `Option 1: 2 steamed idlis + 1 bowl hot pepper rasam (~${dCal} kcal)`,
+      `Option 2: 1 bowl kollu (horse gram) soup + cucumber salad (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 1 bowl clear nattu kozhi pepper soup + 2 idlis (~${dCal} kcal)`,
+      `Option 2: 100g tawa pepper chicken + fresh veggie salad (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+  {
+    dayLabel: 'Monday Menu',
+    vegBreakfast: [
+      '3 steamed idlis with drumstick sambar & pudina (mint) chutney',
+      '1 bowl ragi (finger millet) porridge with 5 soaked almonds',
+    ],
+    nonVegBreakfast: [
+      '2 steamed idlis with sambar & 2 boiled eggs',
+      '2-egg South Indian masala omelette with 1 wheat dosa',
+    ],
+    vegLunch: [
+      '1 small cup matta/brown rice + keerai kootu + pepper rasam',
+      '1 bowl vendaikkai (ladies finger) poriyal + 1 glass buttermilk',
+    ],
+    nonVegLunch: [
+      '1 small cup brown rice + 120g home-style Chicken Chettinad (low oil)',
+      '1 bowl cabbage poriyal + tomato rasam + 1 glass buttermilk',
+    ],
+    eveningSnack: '1 bowl pasi payaru (green moong) sundal + plain green tea',
+    vegDinner: (dCal) => [
+      `Option 1: 2 ragi dosas + 1 bowl vegetable kurma (light coconut) (~${dCal} kcal)`,
+      `Option 2: 2 chapatis + 1 bowl paruppu (dal) & cucumber raita (~${Math.round(dCal * 0.9)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 2 ragi dosas + 2-egg podimas (scrambled eggs) (~${dCal} kcal)`,
+      `Option 2: 120g tawa-grilled fish + 1 wheat dosa & rasam (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+  {
+    dayLabel: 'Tuesday Menu',
+    vegBreakfast: [
+      '2 adai dosas (mixed protein dal) with avial (light yogurt)',
+      '1 bowl kambu (pearl millet) vegetable upma with ginger chutney',
+    ],
+    nonVegBreakfast: [
+      '2 pesarattu (green moong dosas) with 2 egg whites bhurji',
+      '2 idiyappam (string hoppers) with 1 bowl light egg roast',
+    ],
+    vegLunch: [
+      '1 cup sambar sadam (loaded with drumsticks, carrots & dal)',
+      '1 bowl curd + kovakkai (ivy gourd) poriyal',
+    ],
+    nonVegLunch: [
+      '1 small cup red rice + 130g Vanjaram / Tilapia meen kuzhambu (light oil)',
+      '1 bowl pudalangai (snake gourd) kootu + 1 glass neer mor',
+    ],
+    eveningSnack: '1 bowl boiled peanuts (verkadalai) + lemon ginger water',
+    vegDinner: (dCal) => [
+      `Option 1: 2 chapatis + 1 bowl paneer & peas masala (low oil) (~${dCal} kcal)`,
+      `Option 2: 1 bowl moringa (murungai keerai) soup + sprouted moong salad (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 2 chapatis + 120g pepper chicken masala (low oil) (~${dCal} kcal)`,
+      `Option 2: 1 bowl egg-drop clear soup + 100g grilled chicken (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+  {
+    dayLabel: 'Wednesday Menu',
+    vegBreakfast: [
+      '2 pesarattu (whole green gram dosas) with ginger allam chutney',
+      '2 rava/oats idlis with tiffin sambar & coriander chutney',
+    ],
+    nonVegBreakfast: [
+      '3 egg whites + 1 whole egg kalakki/omelette with 2 idlis',
+      '2 appams with 1 bowl light chicken stew',
+    ],
+    vegLunch: [
+      '1 cup thinai (foxtail millet) rice + vendaikkai mor kuzhambu',
+      '1 bowl chana dal sundal + cucumber-tomato salad',
+    ],
+    nonVegLunch: [
+      '1 small cup brown rice + 120g grilled chicken breast + pepper rasam',
+      '1 bowl curd + keerai (spinach) poriyal',
+    ],
+    eveningSnack: '1 glass kambu koozh (pearl millet drink) or roasted makhana',
+    vegDinner: (dCal) => [
+      `Option 1: 3 mini veggie uttappams + 1 bowl sambar (~${dCal} kcal)`,
+      `Option 2: 2 phulkas + 1 bowl mushroom chettinad masala (~${Math.round(dCal * 0.9)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 120g tawa chicken tikka + 1 chapati & mint raita (~${dCal} kcal)`,
+      `Option 2: 2 onion uttappams + 2 boiled egg whites & sambar (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+  {
+    dayLabel: 'Thursday Menu',
+    vegBreakfast: [
+      '2 idiyappam (string hoppers) with 1 bowl kadala curry (black chickpeas)',
+      '1 bowl samai (little millet) ven pongal with brinjal gotsu',
+    ],
+    nonVegBreakfast: [
+      '2 idiyappam with 1 bowl home-style chicken curry (light oil)',
+      '2 wheat dosas with 2-egg pepper omelette & mint chutney',
+    ],
+    vegLunch: [
+      '1 cup curd rice (with pomegranate & ginger) + beans paruppu usili',
+      '1 bowl mixed vegetable sambar',
+    ],
+    nonVegLunch: [
+      '1 small cup rice + 120g meen varuval (tawa-seared fish) + rasam',
+      '1 bowl curd + cabbage poriyal',
+    ],
+    eveningSnack: '1 bowl pori (puffed rice) kara mixture (no oil) + ginger tea',
+    vegDinner: (dCal) => [
+      `Option 1: 2 phulkas + 1 bowl palak paneer or dal tadka (~${dCal} kcal)`,
+      `Option 2: 1 bowl drumstick clear soup + 100g grilled paneer (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 2 phulkas + 120g grilled chicken breast & salad (~${dCal} kcal)`,
+      `Option 2: 1 bowl clear chicken soup + 1 ragi dosa (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+  {
+    dayLabel: 'Friday Menu',
+    vegBreakfast: [
+      '2 ragi dosas with tomato-onion chutney & sambar',
+      '1 bowl broken wheat (samba godhumai) vegetable upma + curd',
+    ],
+    nonVegBreakfast: [
+      '2 ragi dosas with 2-egg masala bhurji',
+      '2 steamed idlis with 2 boiled eggs & kara chutney',
+    ],
+    vegLunch: [
+      '1 small cup brown rice + vatha kuzhambu (light oil) + keerai masiyal',
+      '1 bowl carrot kosambari + 1 glass neer mor',
+    ],
+    nonVegLunch: [
+      '1 small cup brown rice + 120g prawn or chicken thokku + rasam',
+      '1 bowl cucumber pachadi + 1 glass buttermilk',
+    ],
+    eveningSnack: '1 bowl sweet corn & pachai payaru sundal + sukku coffee',
+    vegDinner: (dCal) => [
+      `Option 1: 2 adai dosas + 1 bowl coconut-free veggie stew (~${dCal} kcal)`,
+      `Option 2: 1 large bowl kollu rasam + 100g tawa paneer & veggies (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 120g tawa-grilled fish + 1 phulka & mint chutney (~${dCal} kcal)`,
+      `Option 2: 1 bowl nattu kozhi rasam + 2 steamed idlis (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+  {
+    dayLabel: 'Saturday Menu',
+    vegBreakfast: [
+      '3 mini podi idlis (1 tsp gingelly oil) with hot sambar',
+      '2 whole wheat dosas with mint-coriander chutney',
+    ],
+    nonVegBreakfast: [
+      '3 egg whites scrambled + 2 wheat dosas with mint chutney',
+      '2 dosas with 1 bowl home-style egg curry',
+    ],
+    vegLunch: [
+      '1 cup lemon or tamarind millet rice + paruppu usili + curd',
+      '1 bowl beetroot poriyal + clear tomato rasam',
+    ],
+    nonVegLunch: [
+      '1 small cup rice + 120g pepper chicken curry + rasam',
+      '1 bowl curd + snake gourd poriyal',
+    ],
+    eveningSnack: '1 bowl sprouted green gram & raw mango salad + green tea',
+    vegDinner: (dCal) => [
+      `Option 1: 2 chapatis + 1 bowl chana masala (light oil) (~${dCal} kcal)`,
+      `Option 2: 1 bowl vegetable sambar soup + 2 steamed idlis (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+    nonVegDinner: (dCal) => [
+      `Option 1: 2 chapatis + 100g pepper chicken roast & salad (~${dCal} kcal)`,
+      `Option 2: 1 bowl clear chicken & veggie soup + 2 boiled egg whites (~${Math.round(dCal * 0.85)} kcal)`,
+    ],
+  },
+];
+
 export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
+  const todayMenu = SOUTH_INDIAN_WEEKLY_MENU[new Date().getDay()];
+
   const totalWaterLiters = Number((profile.weight * 0.035).toFixed(1));
   const totalGlasses = Math.round((totalWaterLiters * 1000) / 250);
   const wakeupWaterMl = Math.round(totalWaterLiters * 1000 * 0.22);
@@ -41,7 +253,7 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
   const timeSlots = [
     {
       badge: '6:30 AM',
-      tab: '🌅 Wake-Up',
+            tab: '🌅 Wake-Up',
       title: 'Wake-Up & Morning Burn',
       accent: 'from-amber-500/20 to-orange-500/5 border-amber-500/30',
       items: [
@@ -49,7 +261,7 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
           icon: '💧',
           label: 'Wake-Up Hydration',
           points: [
-            `Drink ${wakeupWaterMl} ml of warm water right after waking up`,
+            `Drink ${wakeupWaterMl} ml of warm water (jeera or lemon) right after waking up`,
             'Helps kick-start your metabolism before any food',
           ],
         },
@@ -80,23 +292,15 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
       items: [
         {
           icon: '🍽️',
-          label: 'Breakfast Options (Pick Any One)',
-          points: dietType === 'veg'
-            ? [
-                '2 to 3 steamed idlis with sambar',
-                '1 bowl vegetable oats with 5 soaked almonds',
-              ]
-            : [
-                '3 egg whites + 1 whole egg with 2 multigrain toasts',
-                '2 steamed idlis with 2 boiled eggs',
-              ],
+          label: `${todayMenu.dayLabel} • South Indian Breakfast (Pick Any One)`,
+          points: dietType === 'veg' ? todayMenu.vegBreakfast : todayMenu.nonVegBreakfast,
         },
         {
           icon: '☕',
-          label: 'Tea, Coffee & Sugar Rule',
+          label: 'Filter Coffee, Tea & Sugar Rule',
           points: [
-            'Best choice: plain green tea or black coffee',
-            'Milk tea or coffee: max 1 small cup with ZERO white sugar',
+            'Best choice: plain green tea, sukku malli coffee, or black coffee',
+            'Filter coffee or milk tea: max 1 small cup with ZERO white sugar',
           ],
         },
       ],
@@ -114,18 +318,8 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
       items: [
         {
           icon: '🥗',
-          label: 'Balanced Lunch Plate',
-          points: dietType === 'veg'
-            ? [
-                '1 small cup cooked rice or 2 chapatis',
-                '1 full bowl dal or paneer curry',
-                '1 large bowl fresh veggie salad + 1 glass buttermilk',
-              ]
-            : [
-                '1 small cup cooked rice or 2 chapatis',
-                '120g grilled chicken or fish',
-                '1 large bowl fresh veggie salad + 1 glass buttermilk',
-              ],
+          label: `${todayMenu.dayLabel} • Balanced South Indian Lunch`,
+          points: dietType === 'veg' ? todayMenu.vegLunch : todayMenu.nonVegLunch,
         },
         {
           icon: '😴',
@@ -158,10 +352,10 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
         },
         {
           icon: '🚫',
-          label: 'Evening Tea & Coffee Rule',
+          label: 'Evening Snack & Caffeine Rule',
           points: [
-            'Skip milk tea and coffee after 5:00 PM for deep sleep',
-            'Healthy swap: herbal tea, lemon water, or roasted chana',
+            `Healthy 4:30 PM Tamil snack: ${todayMenu.eveningSnack}`,
+            'Skip sugary milk tea, coffee, and fried snacks after 5:00 PM',
           ],
         },
       ],
@@ -183,16 +377,8 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
       items: [
         {
           icon: '🥣',
-          label: 'Light Dinner (2.5 Hrs Before Bed)',
-          points: dietType === 'veg'
-            ? [
-                `Option 1: 2 phulkas + 1 bowl palak paneer or dal (~${dCal} kcal)`,
-                `Option 2: Large veggie soup + cucumber salad (~${Math.round(dCal * 0.85)} kcal)`,
-              ]
-            : [
-                `Option 1: 2 phulkas + grilled chicken breast (~${dCal} kcal)`,
-                `Option 2: Clear chicken soup + fresh salad (~${Math.round(dCal * 0.85)} kcal)`,
-              ],
+          label: `${todayMenu.dayLabel} • Light South Indian Dinner`,
+          points: dietType === 'veg' ? todayMenu.vegDinner(dCal) : todayMenu.nonVegDinner(dCal),
         },
         {
           icon: '💧',
@@ -213,3 +399,4 @@ export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
 
   return { totalWaterLiters, totalGlasses, timeSlots };
 }
+
