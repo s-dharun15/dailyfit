@@ -41,35 +41,73 @@ const currentLiveSlot = getRealTimeSlotIndex();
   });
 
   useEffect(() => {
+    let active = true;
+    const fallbackTimer = setTimeout(() => {
+      if (active && !profile) router.push('/');
+    }, 6000);
+
     const loadData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return router.push('/');
-      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-      if (!prof) return router.push('/onboarding');
-      setProfile(prof);
-      if (prof.diet_type) setDietType(prof.diet_type);
-
-      const { data: userLogs } = await supabase
-        .from('daily_logs')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('day_number', { ascending: true });
-
-      if (userLogs) {
-        setLogs(userLogs);
-        if (userLogs.some((l) => l.log_date === new Date().toISOString().split('T').at(0))) {
-          setAlreadyLoggedToday(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          router.push('/');
+          return;
         }
+        const { data: prof, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error || !prof) {
+          router.push('/onboarding');
+          return;
+        }
+        if (!active) return;
+        setProfile(prof);
+        if (prof.diet_type) setDietType(prof.diet_type);
+
+        const { data: userLogs } = await supabase
+          .from('daily_logs')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .order('day_number', { ascending: true });
+
+        if (userLogs && active) {
+          setLogs(userLogs);
+          if (userLogs.some((l) => l.log_date === new Date().toISOString().split('T').at(0))) {
+            setAlreadyLoggedToday(true);
+          }
+        }
+      } catch {
+        router.push('/');
       }
     };
     loadData();
+    return () => {
+      active = false;
+      clearTimeout(fallbackTimer);
+    };
   }, [router]);
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-3 text-emerald-400 font-bold">
-        <Logo size={42} />
-        <span className="text-xs tracking-widest uppercase">Loading DailyFit...</span>
+      <div className="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center z-50">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute w-28 h-28 rounded-full bg-emerald-500/20 animate-ping" />
+          <div className="relative bg-zinc-900 p-5 rounded-3xl border border-emerald-500/30 shadow-2xl shadow-emerald-500/20 animate-bounce">
+            <Logo size={64} />
+          </div>
+        </div>
+        <h1 className={`${stylishFont.className} text-3xl text-white mt-6 tracking-tight`}>
+          Daily<span className="text-emerald-400">Fit</span>
+        </h1>
+        <p className="text-xs text-zinc-400 mt-1.5 tracking-widest uppercase">
+          South Indian Fitness Coach
+        </p>
+        <div className="w-36 h-1 bg-zinc-800 rounded-full overflow-hidden mt-6">
+          <div className="h-full bg-emerald-400 rounded-full animate-pulse w-2/3" />
+        </div>
       </div>
     );
   }

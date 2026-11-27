@@ -22,18 +22,21 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "DailyFit",
-  description: "Your personalized morning-to-night fitness & calorie loss tracker",
+  description: "Your personalized South Indian fitness & calorie tracker",
   manifest: "/manifest.json",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-zinc-950`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-950 text-white">
-        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}` }} />
+      <body className="min-h-full flex flex-col bg-zinc-950 text-white pt-[max(env(safe-area-inset-top),28px)] pb-[env(safe-area-inset-bottom)]">
         {children}
       </body>
     </html>
