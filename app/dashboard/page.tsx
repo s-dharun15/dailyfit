@@ -112,6 +112,42 @@ const [showCoach, setShowCoach] = useState(false);
     }
     setSaving(false);
   };
+    const handleResetAll = async () => {
+    if (!profile) return;
+
+    // 1. Reset hydration, check-in answers, logs & active tab
+    setGlassesDrunk(0);
+    setAlreadyLoggedToday(false);
+    setLogs([]);
+    setActiveTab('routine');
+    setAnswers({
+      morning_water: null,
+      morning_workout: null,
+      healthy_breakfast: null,
+      no_sugar: null,
+      healthy_lunch: null,
+      no_long_nap: null,
+      evening_workout: null,
+      no_late_caffeine: null,
+      light_dinner: null,
+      night_water: null,
+    });
+
+    // 2. Clear all DailyFit localStorage keys (water, foods, weights)
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('dailyfit_')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    // 3. Clear Supabase daily_logs, food_logs & weight_logs for this user
+    await Promise.all([
+      supabase.from('daily_logs').delete().eq('user_id', profile.id),
+      supabase.from('food_logs').delete().eq('user_id', profile.id),
+      supabase.from('weight_logs').delete().eq('user_id', profile.id),
+    ]);
+  };
+
 
   return (
     <div className={`${bodyFont.className} min-h-screen bg-zinc-950 text-white pb-24 w-full select-none`}>
@@ -359,8 +395,11 @@ const [showCoach, setShowCoach] = useState(false);
        profile={profile}
        onClose={() => setShowEditProfile(false)}
        onUpdated={(updated) => setProfile(updated)}
+                 onResetAll={handleResetAll}
+
      />
    )}
+   
       {timerWorkout && (
      <WorkoutTimerModal workout={timerWorkout} onClose={() => setTimerWorkout(null)} />
    )}
