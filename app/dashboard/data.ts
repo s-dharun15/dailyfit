@@ -237,8 +237,13 @@ const SOUTH_INDIAN_WEEKLY_MENU: SouthIndianDayMenu[] = [
   },
 ];
 
-export function getRoutineData(profile: Profile, dietType: 'veg' | 'nonveg') {
-  const todayMenu = SOUTH_INDIAN_WEEKLY_MENU[new Date().getDay()];
+export function getRoutineData(
+  profile: Profile,
+  dietType: 'veg' | 'nonveg',
+  dayIndex?: number
+) {
+  const resolvedDay = typeof dayIndex === 'number' ? dayIndex : new Date().getDay();
+  const todayMenu = SOUTH_INDIAN_WEEKLY_MENU[resolvedDay % 7];
 
   const totalWaterLiters = Number((profile.weight * 0.035).toFixed(1));
   const totalGlasses = Math.round((totalWaterLiters * 1000) / 250);

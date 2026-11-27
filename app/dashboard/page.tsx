@@ -10,6 +10,8 @@ import VideoModal from './VideoModal';
 import RemindersButton from './RemindersButton';
 import Logo from '../Logo';
 import EditProfileModal from './EditProfileModal';
+import WorkoutTimerModal from './WorkoutTimerModal';
+
 ;
 
 
@@ -23,6 +25,8 @@ export default function Dashboard() {
   const [selectedSlot, setSelectedSlot] = useState(0);
 const [dietType, setDietType] = useState<'veg' | 'nonveg'>('nonveg');
 const [glassesDrunk, setGlassesDrunk] = useState(0);
+const [previewDay, setPreviewDay] = useState<number | undefined>(undefined);
+
 
 useEffect(() => {
   const h = new Date().getHours() + new Date().getMinutes() / 60;
@@ -50,6 +54,8 @@ const handleAddWater = (maxGlasses: number) => {
   const [saving, setSaving] = useState(false);
   const [activeVideo, setActiveVideo] = useState<WorkoutDemo | null>(null);
 const [showEditProfile, setShowEditProfile] = useState(false);
+const [timerWorkout, setTimerWorkout] = useState<WorkoutDemo | null>(null);
+
 
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({
@@ -77,7 +83,7 @@ const [showEditProfile, setShowEditProfile] = useState(false);
   if (!profile) return <Logo size={32} />
 
 
-  const { totalWaterLiters, totalGlasses, timeSlots } = getRoutineData(profile, dietType);
+  const { totalWaterLiters, totalGlasses, timeSlots } = getRoutineData(profile, dietType, previewDay);
   const allQuestions = timeSlots.flatMap((s) => s.questions);
   const todayCaloriesLost = allQuestions.reduce((sum, q) => sum + (answers[q.key] ? q.pts : 0), 0);
   const totalCaloriesLost = logs.reduce((sum, item) => sum + (item.calories_lost || 0), 0);
@@ -156,6 +162,43 @@ const [showEditProfile, setShowEditProfile] = useState(false);
       </div>
             {activeTab === 'routine' && (
         <div className="px-5 mt-5">
+                    <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-2.5 mb-3">
+            <div className="flex items-center justify-between mb-1.5 px-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">
+                📅 Weekly South Indian Menu
+              </span>
+              {previewDay !== undefined && (
+                <button
+                  type="button"
+                  onClick={() => setPreviewDay(undefined)}
+                  className="text-[10px] font-bold text-amber-400 underline"
+                >
+                  Back to Today
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, idx) => {
+                const activeIdx = previewDay !== undefined ? previewDay : new Date().getDay();
+                const isSelected = activeIdx === idx;
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => setPreviewDay(idx)}
+                    className={`py-1.5 rounded-lg text-[10px] font-extrabold transition ${
+                      isSelected
+                        ? 'bg-emerald-500 text-zinc-950 shadow-sm'
+                        : 'bg-zinc-950 text-zinc-400 border border-zinc-800/80 hover:text-white'
+                    }`}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
                     <div className="grid grid-cols-5 gap-1.5 pb-1">
             {timeSlots.map((slot, i) => (
               <button
@@ -209,9 +252,21 @@ const [showEditProfile, setShowEditProfile] = useState(false);
                       <div className="text-xs font-bold text-white">{w.name}</div>
                       <div className="text-[11px] text-zinc-400">{w.reps}</div>
                     </div>
-                    <button onClick={() => setActiveVideo(w)} className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-extrabold active:scale-95">
-                      ▶️ Watch Demo
-                    </button>
+                                        <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setTimerWorkout(w)}
+                        className="px-2.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-extrabold active:scale-95"
+                      >
+                        ⏱️ Start
+                      </button>
+                      <button
+                        onClick={() => setActiveVideo(w)}
+                        className="px-2.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-extrabold active:scale-95"
+                      >
+                        ▶️ Demo
+                      </button>
+                    </div>
+
                   </div>
                 ))}
               </div>
@@ -273,6 +328,10 @@ const [showEditProfile, setShowEditProfile] = useState(false);
        onUpdated={(updated) => setProfile(updated)}
      />
    )}
+      {timerWorkout && (
+     <WorkoutTimerModal workout={timerWorkout} onClose={() => setTimerWorkout(null)} />
+   )}
+
 
     </div>
   );

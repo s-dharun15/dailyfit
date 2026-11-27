@@ -166,7 +166,47 @@ export default function StreakTab({
         </form>
       </div>
 
-      {/* Transformation Grid */}
+         {/* Unlockable Milestone Badges */}
+   <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 space-y-3">
+     <div className="flex items-center justify-between">
+       <h3 className="text-sm font-extrabold text-white">🎖️ Milestone Badges</h3>
+       <span className="text-[11px] text-emerald-400 font-bold">
+         {completedCount >= 30 ? '4/4' : completedCount >= 15 ? '3/4' : completedCount >= 7 ? '2/4' : completedCount >= 3 ? '1/4' : '0/4'} Unlocked
+       </span>
+     </div>
+     <div className="grid grid-cols-2 gap-2.5">
+       {[
+         { days: 3, icon: '🌱', title: '3-Day Starter', desc: 'Built early habit momentum' },
+         { days: 7, icon: '🔥', title: '7-Day Warrior', desc: 'Full week of clean Tamil meals' },
+         { days: 15, icon: '⚡', title: '15-Day Discipline', desc: 'Halfway transformation milestone' },
+         { days: 30, icon: '👑', title: '30-Day Champion', desc: 'Completed full 30-day cycle' },
+       ].map((b) => {
+         const unlocked = completedCount >= b.days;
+         return (
+           <div
+             key={b.days}
+             className={`p-3 rounded-2xl border transition ${
+               unlocked
+                 ? 'bg-emerald-500/15 border-emerald-400/50 text-white'
+                 : 'bg-zinc-950/70 border-zinc-800/80 text-zinc-500 opacity-60'
+             }`}
+           >
+             <div className="flex items-center justify-between mb-1">
+               <span className="text-xl">{unlocked ? b.icon : '🔒'}</span>
+               <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-zinc-900">
+                 {b.days}D
+               </span>
+             </div>
+             <div className="text-xs font-extrabold">{b.title}</div>
+             <div className="text-[10px] mt-0.5 leading-snug">{b.desc}</div>
+           </div>
+         );
+       })}
+     </div>
+   </div>
+
+   {/* Transformation Grid */}
+
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
         <h3 className="text-sm font-bold mb-3">
           {profile.challenge_days}-Day Transformation Tracker 🏆
