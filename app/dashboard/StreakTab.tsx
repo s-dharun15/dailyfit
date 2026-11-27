@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Profile } from './data';
+import ShareProgressModal from './ShareProgressModal';
+
 
 type Props = {
   profile: Profile;
@@ -27,22 +29,38 @@ export default function StreakTab({
   const [history, setHistory] = useState<WeightEntry[]>([]);
   const [newWeight, setNewWeight] = useState(String(profile.weight));
   const [logging, setLogging] = useState(false);
+const [showShare, setShowShare] = useState(false);
 
-  useEffect(() => {
+
+    useEffect(() => {
     const key = `dailyfit_weights_${profile.id}`;
     const raw = localStorage.getItem(key);
-    if (raw) {
-      setHistory(JSON.parse(raw));
-    } else {
-      const initial: WeightEntry[] = [
-        {
-          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
-          weight: profile.weight,
-        },
-      ];
-      localStorage.setItem(key, JSON.stringify(initial));
-      setHistory(initial);
-    }
+    if (raw) setHistory(JSON.parse(raw));
+
+    const loadCloudWeights = async () => {
+      const { data } = await supabase
+        .from('weight_logs')
+        .select('*')
+        .eq('user_id', profile.id)
+        .order('created_at', { ascending: true })
+        .limit(7);
+
+      if (data && data.length > 0) {
+        const mapped = data.map((row) => ({ date: row.log_date, weight: Number(row.weight) }));
+        setHistory(mapped);
+        localStorage.setItem(key, JSON.stringify(mapped));
+      } else if (!raw) {
+        const initial: WeightEntry[] = [
+          {
+            date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+            weight: profile.weight,
+          },
+        ];
+        setHistory(initial);
+        localStorage.setItem(key, JSON.stringify(initial));
+      }
+    };
+    loadCloudWeights();
   }, [profile.id, profile.weight]);
 
   const startWeight = history.at(0)?.weight ?? profile.weight;
@@ -64,9 +82,13 @@ export default function StreakTab({
     setHistory(nextHistory);
     localStorage.setItem(`dailyfit_weights_${profile.id}`, JSON.stringify(nextHistory));
 
-    await supabase.from('profiles').update({ weight: val }).eq('id', profile.id);
+    await Promise.all([
+      supabase.from('weight_logs').insert({ user_id: profile.id, log_date: todayLabel, weight: val }),
+      supabase.from('profiles').update({ weight: val }).eq('id', profile.id),
+    ]);
     setLogging(false);
   };
+
 
   return (
     <div className="px-5 mt-5 space-y-4">
@@ -83,7 +105,15 @@ export default function StreakTab({
           <div className="text-2xl font-black text-lime-300">
             {completedCount}/{profile.challenge_days}
           </div>
-          <div className="text-[11px] text-zinc-400">Days Done</div>
+          <div className="text-[11px] text-zinc-400 mb-1.5">Days Done</div>
+<button
+  type="button"
+  onClick={() => setShowShare(true)}
+  className="px-3 py-1 rounded-full bg-emerald-500 text-zinc-950 text-[10px] font-extrabold active:scale-95 transition"
+>
+  📤 Share Card
+</button>
+
         </div>
       </div>
 
@@ -233,6 +263,18 @@ export default function StreakTab({
           })}
         </div>
       </div>
+       {showShare && (
+   <ShareProgressModal
+     profile={profile}
+     completedCount={completedCount}
+     totalCaloriesLost={totalCaloriesLost}
+     startWeight={startWeight}
+     latestWeight={latestWeight}
+     bmi={bmi}
+     onClose={() => setShowShare(false)}
+   />
+ )}
+
     </div>
   );
 }

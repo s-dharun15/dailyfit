@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
 import { Profile } from './data';
+
 
 type FoodItem = {
   id: string;
@@ -56,28 +58,80 @@ export default function FoodLogTab({ profile, dietType }: Props) {
   const [customName, setCustomName] = useState('');
   const [customCals, setCustomCals] = useState('');
 
-  useEffect(() => {
-    const key = `dailyfit_foods_${new Date().toISOString().split('T').at(0) || 'today'}`;
-    const saved = localStorage.getItem(key);
-    if (saved) setLoggedFoods(JSON.parse(saved));
-  }, []);
+    useEffect(() => {
+    const todayStr = new Date().toISOString().split('T').at(0) || 'today';
+    const localKey = `dailyfit_foods_${todayStr}`;
+    const cached = localStorage.getItem(localKey);
+    if (cached) setLoggedFoods(JSON.parse(cached));
 
-  const persistFoods = (next: LoggedFood[]) => {
-    setLoggedFoods(next);
-    const key = `dailyfit_foods_${new Date().toISOString().split('T').at(0) || 'today'}`;
-    localStorage.setItem(key, JSON.stringify(next));
-  };
+    const fetchCloudFoods = async () => {
+      const { data } = await supabase
+        .from('food_logs')
+        .select('*')
+        .eq('user_id', profile.id)
+        .eq('log_date', todayStr)
+        .order('created_at', { ascending: false });
 
-  const handleAddFood = (item: FoodItem) => {
-    const entry: LoggedFood = {
-      ...item,
-      logId: `${item.id}_${Date.now()}`,
-      time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+      if (data && data.length > 0) {
+        const mapped: LoggedFood[] = data.map((row) => ({
+          id: row.id,
+          logId: row.id,
+          name: row.food_name,
+          portion: row.portion || '1 serving',
+          calories: row.calories,
+          protein: row.protein || 0,
+          carbs: row.carbs || 0,
+          category: 'Main Meal',
+          isVeg: true,
+          time: row.logged_time || '',
+        }));
+        setLoggedFoods(mapped);
+        localStorage.setItem(localKey, JSON.stringify(mapped));
+      }
     };
-    persistFoods([entry, ...loggedFoods]);
+    fetchCloudFoods();
+  }, [profile.id]);
+
+  const handleAddFood = async (item: FoodItem) => {
+    const todayStr = new Date().toISOString().split('T').at(0) || 'today';
+    const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    const tempId = `${item.id}_${Date.now()}`;
+
+    const optimistic: LoggedFood = { ...item, logId: tempId, time: timeStr };
+    const nextList = [optimistic, ...loggedFoods];
+    setLoggedFoods(nextList);
+    localStorage.setItem(`dailyfit_foods_${todayStr}`, JSON.stringify(nextList));
+
+    const { data } = await supabase
+      .from('food_logs')
+      .insert({
+        user_id: profile.id,
+        log_date: todayStr,
+        food_name: item.name,
+        portion: item.portion,
+        calories: item.calories,
+        protein: item.protein,
+        carbs: item.carbs,
+        logged_time: timeStr,
+      })
+      .select()
+      .single();
+
+    if (data) {
+      const synced = nextList.map((f) => (f.logId === tempId ? { ...f, logId: data.id } : f));
+      setLoggedFoods(synced);
+      localStorage.setItem(`dailyfit_foods_${todayStr}`, JSON.stringify(synced));
+    }
   };
 
-  const handleAddCustom = (e: React.FormEvent) => {
+  const handleRemoveFood = async (logId: string) => {
+    const todayStr = new Date().toISOString().split('T').at(0) || 'today';
+    const nextList = loggedFoods.filter((f) => f.logId !== logId);
+    setLoggedFoods(nextList);
+    localStorage.setItem(`dailyfit_foods_${todayStr}`, JSON.stringify(nextList));
+    await supabase.from('food_logs').delete().eq('id', logId).eq('user_id', profile.id);
+  };
+    const handleAddCustom = (e: React.FormEvent) => {
     e.preventDefault();
     const cal = Number(customCals);
     if (!customName.trim() || !cal || cal <= 0) return;
@@ -95,9 +149,7 @@ export default function FoodLogTab({ profile, dietType }: Props) {
     setCustomCals('');
   };
 
-  const handleRemoveFood = (logId: string) => {
-    persistFoods(loggedFoods.filter((f) => f.logId !== logId));
-  };
+
 
   const totalEaten = loggedFoods.reduce((sum, f) => sum + f.calories, 0);
   const totalProtein = loggedFoods.reduce((sum, f) => sum + f.protein, 0);

@@ -114,6 +114,14 @@ export default function Home() {
       <button onClick={() => { setIsSignUp(!isSignUp); setErrorMsg(''); }} className="mt-6 text-sm text-zinc-400 hover:text-emerald-400 text-center">
         {isSignUp ? 'Already have an account? Login here' : 'New to DailyFit? Create an account'}
       </button>
+         <div className="mt-6 text-center text-[11px] text-zinc-500">
+     By continuing, you agree to our{' '}
+     <a href="/privacy" className="text-emerald-400 underline font-semibold">
+       Privacy Policy
+     </a>
+     .
+   </div>
+
     </div>
   );
 }
