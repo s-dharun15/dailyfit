@@ -17,7 +17,7 @@ jobs:
         run: |
           npm run build
           mv out/_next out/next_assets
-          find out -type f \( -name "*.html" -o -name "*.js" -o -name "*.css" \) -exec sed -i 's|/_next/|/next_assets/|g' {} +
+          find out -type f \( -name "*.html" -o -name "*.css" \) -exec sed -i 's|/_next/|/next_assets/|g' {} +
       - run: npx cap sync android
       - uses: actions/setup-java@v4
         with:
