@@ -1,16 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    unoptimized: true,
+  /* config options here */
+  experimental: {
+    agentFeedback: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: "/.well-known/assetlinks.json",
-        destination: "/assetlinks.json",
+  cacheComponents: true,
+  partialPrefetching: true,
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
       },
-    ];
+    },
   },
 };
 
