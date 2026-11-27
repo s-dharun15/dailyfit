@@ -9,6 +9,8 @@ import StreakTab from './StreakTab';
 import VideoModal from './VideoModal';
 import RemindersButton from './RemindersButton';
 import Logo from '../Logo';
+import EditProfileModal from './EditProfileModal';
+;
 
 
 const stylishFont = Outfit({ subsets: ['latin'], weight: ['800'] });
@@ -18,12 +20,36 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [logs, setLogs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'routine' | 'checkin' | 'streak'>('routine');
-  const [selectedSlot, setSelectedSlot] = useState(0);
+  const [selectedSlot, setSelectedSlot] = useState(() => {
+  const h = new Date().getHours() + new Date().getMinutes() / 60;
+  if (h >= 5 && h < 8) return 0;
+  if (h >= 8 && h < 12) return 1;
+  if (h >= 12 && h < 16.5) return 2;
+  if (h >= 16.5 && h < 20) return 3;
+  return 4;
+});
+
   const [dietType, setDietType] = useState<'veg' | 'nonveg'>('nonveg');
-  const [glassesDrunk, setGlassesDrunk] = useState(0);
+  const todayKey = new Date().toISOString().split('T').at(0) || 'today';
+const [glassesDrunk, setGlassesDrunk] = useState(0);
+
+useEffect(() => {
+  const savedWater = localStorage.getItem(`dailyfit_water_${todayKey}`);
+  if (savedWater) setGlassesDrunk(Number(savedWater));
+}, [todayKey]);
+
+const handleAddWater = (maxGlasses: number) => {
+  setGlassesDrunk((prev) => {
+    const next = Math.min(maxGlasses + 4, prev + 1);
+    localStorage.setItem(`dailyfit_water_${todayKey}`, String(next));
+    return next;
+  });
+};
   const [alreadyLoggedToday, setAlreadyLoggedToday] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeVideo, setActiveVideo] = useState<WorkoutDemo | null>(null);
+const [showEditProfile, setShowEditProfile] = useState(false);
+
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({
     morning_water: null, morning_workout: null, healthy_breakfast: null, no_sugar: null,
@@ -88,7 +114,14 @@ export default function Dashboard() {
             <button onClick={() => setDietType('veg')} className={`px-2 py-1 rounded-full whitespace-nowrap ${dietType === 'veg' ? 'bg-emerald-500 text-zinc-950' : 'text-zinc-400'}`}>🥗 Veg</button>
             <button onClick={() => setDietType('nonveg')} className={`px-2 py-1 rounded-full whitespace-nowrap ${dietType === 'nonveg' ? 'bg-amber-400 text-zinc-950' : 'text-zinc-400'}`}>🍗 Non-Veg</button>
           </div>
-          <RemindersButton />
+          <button
+  onClick={() => setShowEditProfile(true)}
+  className="px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap bg-zinc-900 border border-zinc-700 text-zinc-300 hover:border-emerald-400 hover:text-emerald-300 transition"
+>
+  ⚙️ Edit
+</button>
+<RemindersButton />
+
           <button
             onClick={async () => { await supabase.auth.signOut(); router.push('/'); }}
             className="px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap bg-rose-500/15 border border-rose-500/40 text-rose-400 hover:bg-rose-500 hover:text-white transition"
@@ -117,7 +150,7 @@ export default function Dashboard() {
             <div className="text-2xl font-black mt-1">{glassesDrunk} <span className="text-sm font-normal text-zinc-400">/ {totalGlasses}</span></div>
             <p className="text-[11px] text-zinc-400 mt-0.5">Goal: {totalWaterLiters} Liters</p>
           </div>
-          <button onClick={() => setGlassesDrunk((g) => Math.min(totalGlasses + 4, g + 1))} className="w-full py-2.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-zinc-950 font-extrabold text-xs active:scale-90">+1 Glass (250ml) 🥤</button>
+          <button onClick={() => handleAddWater(totalGlasses)} className="w-full py-2.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-zinc-950 font-extrabold text-xs active:scale-90">+1 Glass (250ml) 🥤</button>
         </div>
       </div>
             {activeTab === 'routine' && (
@@ -232,6 +265,14 @@ export default function Dashboard() {
       </div>
 
       <VideoModal workout={activeVideo} onClose={() => setActiveVideo(null)} />
+           {showEditProfile && (
+     <EditProfileModal
+       profile={profile}
+       onClose={() => setShowEditProfile(false)}
+       onUpdated={(updated) => setProfile(updated)}
+     />
+   )}
+
     </div>
   );
 }
