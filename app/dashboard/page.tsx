@@ -12,6 +12,8 @@ import Logo from '../Logo';
 import EditProfileModal from './EditProfileModal';
 import WorkoutTimerModal from './WorkoutTimerModal';
 import FoodLogTab from './FoodLogTab';
+import CoachModal from './CoachModal';
+
 
 
 ;
@@ -362,6 +364,17 @@ const [showCoach, setShowCoach] = useState(false);
       {timerWorkout && (
      <WorkoutTimerModal workout={timerWorkout} onClose={() => setTimerWorkout(null)} />
    )}
+         {showCoach && (
+        <CoachModal
+          profile={profile}
+          dietType={dietType}
+          glassesDrunk={glassesDrunk}
+          totalGlasses={totalGlasses}
+          onClose={() => setShowCoach(false)}
+        />
+      )}
+
+   
 
 
     </div>
