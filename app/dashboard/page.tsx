@@ -20,31 +20,32 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [logs, setLogs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'routine' | 'checkin' | 'streak'>('routine');
-  const [selectedSlot, setSelectedSlot] = useState(() => {
-  const h = new Date().getHours() + new Date().getMinutes() / 60;
-  if (h >= 5 && h < 8) return 0;
-  if (h >= 8 && h < 12) return 1;
-  if (h >= 12 && h < 16.5) return 2;
-  if (h >= 16.5 && h < 20) return 3;
-  return 4;
-});
-
-  const [dietType, setDietType] = useState<'veg' | 'nonveg'>('nonveg');
-  const todayKey = new Date().toISOString().split('T').at(0) || 'today';
+  const [selectedSlot, setSelectedSlot] = useState(0);
+const [dietType, setDietType] = useState<'veg' | 'nonveg'>('nonveg');
 const [glassesDrunk, setGlassesDrunk] = useState(0);
 
 useEffect(() => {
-  const savedWater = localStorage.getItem(`dailyfit_water_${todayKey}`);
+  const h = new Date().getHours() + new Date().getMinutes() / 60;
+  if (h >= 5 && h < 8) setSelectedSlot(0);
+  else if (h >= 8 && h < 12) setSelectedSlot(1);
+  else if (h >= 12 && h < 16.5) setSelectedSlot(2);
+  else if (h >= 16.5 && h < 20) setSelectedSlot(3);
+  else setSelectedSlot(4);
+
+  const key = new Date().toISOString().split('T').at(0) || 'today';
+  const savedWater = localStorage.getItem(`dailyfit_water_${key}`);
   if (savedWater) setGlassesDrunk(Number(savedWater));
-}, [todayKey]);
+}, []);
 
 const handleAddWater = (maxGlasses: number) => {
+  const key = new Date().toISOString().split('T').at(0) || 'today';
   setGlassesDrunk((prev) => {
     const next = Math.min(maxGlasses + 4, prev + 1);
-    localStorage.setItem(`dailyfit_water_${todayKey}`, String(next));
+    localStorage.setItem(`dailyfit_water_${key}`, String(next));
     return next;
   });
 };
+
   const [alreadyLoggedToday, setAlreadyLoggedToday] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeVideo, setActiveVideo] = useState<WorkoutDemo | null>(null);
