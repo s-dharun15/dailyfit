@@ -17,7 +17,16 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [logs, setLogs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'routine' | 'checkin' | 'streak'>('routine');
-  const [selectedSlot, setSelectedSlot] = useState(0);
+  const getRealTimeSlotIndex = () => {
+  const hour = new Date().getHours() + new Date().getMinutes() / 60;
+  if (hour >= 5 && hour < 8) return 0;
+  if (hour >= 8 && hour < 12) return 1;
+  if (hour >= 12 && hour < 16.5) return 2;
+  if (hour >= 16.5 && hour < 20) return 3;
+  return 4;
+};
+const [selectedSlot, setSelectedSlot] = useState(getRealTimeSlotIndex);
+const currentLiveSlot = getRealTimeSlotIndex();
   const [dietType, setDietType] = useState<string>('non_veg');
   const [previewDayOffset, setPreviewDayOffset] = useState(0);
   const [glassesDrunk, setGlassesDrunk] = useState(0);
@@ -262,7 +271,13 @@ export default function Dashboard() {
               <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-zinc-950/60">
                 ⏰ {currentCard.badge}
               </span>
-              <span className="text-xs text-zinc-400">Step {selectedSlot + 1} of 5</span>
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
+  {selectedSlot === currentLiveSlot
+    ? '🟢 Active Now'
+    : selectedSlot < currentLiveSlot
+    ? '✅ Earlier Today'
+    : `🔒 Upcoming (${currentCard.badge})`}
+</span>
             </div>
 
             <h2 className={`${stylishFont.className} text-xl text-white`}>{currentCard.title}</h2>
